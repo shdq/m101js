@@ -1,0 +1,21 @@
+// My solution for queryDocument function for the homework 3.3
+function queryDocument(options) {
+    var query = {
+        "tag_list": { $regex: "social-networking"} /* TODO: Complete this statement to match the regular expression "social-networking" */
+    };
+
+    if (("firstYear" in options) && ("lastYear" in options)) {
+        query.founded_year = { "$gte": options.firstYear, "$lte": options.lastYear };
+
+    } else if ("firstYear" in options) {
+        query.founded_year = { "$gte": options.firstYear };
+    } else if ("lastYear" in options) {
+        query.founded_year = { "$lte": options.lastYear };
+    }
+
+    if ("city" in options) {
+        query["offices.city"] = options.city;
+    }
+
+    return query;
+}
