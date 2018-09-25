@@ -1,1 +1,18 @@
 Accumulators can help you with the homework https://docs.mongodb.com/manual/meta/aggregation-quick-reference/index.html
+
+db.companies.aggregate([
+  { $match : { "relationships.person.permalink" : "eric-di-benedetto" } },
+  { $project: { relationships: 1, permalink: 1, _id: 0 } },
+  { $unwind: "$relationships" },
+  { $match : { "relationships.person.permalink" : "eric-di-benedetto" } },
+  { $group: {
+      _id: { person: "$relationships.person.permalink", company: "$name" },
+      companies: { $addToSet : "$permalink"},
+    }
+  },
+  { $project: {
+      _id: 0,
+      permalink: "$_id.person",
+      uniqueCompanies: { $size: "$companies"}
+  }}
+])
