@@ -1,0 +1,33 @@
+db.companies.aggregate([
+  { $match: { "founded_year": 2004}},
+  { $project: {
+      _id: 0, 
+      name: 1,
+      num_of_rounds: { $size: "$funding_rounds" },
+      funding_rounds: 1
+  } },
+  { $match: { "num_of_rounds": { $gte: 5}}},
+  { $unwind: "$funding_rounds" },
+  { $group: { 
+    _id: { name: "$name"},
+    avg_raised: { $avg: "$funding_rounds.raised_amount" },
+  } },
+  { $sort: { avg_raised: 1}}
+]).pretty()
+
+
+db.item.aggregate([
+  { $project: { _id: 1, category: 1} },
+  { $group: { 
+    _id: "$category",
+    num: { $sum: 1 } 
+    } 
+  },
+])
+
+db.item.aggregate([
+  { $match : { category : 'Apparel' } },
+  { $group: { _id: null, count: { $sum: 1 } } }
+])
+
+db.item.createIndex({ title: 1, slogan: 1, description:1 })
